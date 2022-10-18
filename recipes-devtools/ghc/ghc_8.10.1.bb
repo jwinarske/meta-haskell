@@ -2,11 +2,13 @@ DESCRIPTION = "The Glorious Glasgow Haskell Compilation System"
 LICENSE = "GHC"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=7cb08deb79c4385547f57d6bb2864e0f"
 
-DEPENDS = " gmp \ 
-            alex-native \
-            happy-native \
-            gcc-cross-${TARGET_ARCH} \ 
-            binutils-cross-${TARGET_ARCH} "
+DEPENDS = "\
+    gmp \ 
+    alex-native \
+    happy-native \
+    gcc-cross-${TARGET_ARCH} \ 
+    binutils-cross-${TARGET_ARCH} \
+"
 
 SRCREV = "1941ef4f050c0dfcb68229641fcbbde3a10f1072"
 SRC_URI = "gitsm://github.com/ghc/ghc.git;protocol=https;branch=master"

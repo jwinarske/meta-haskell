@@ -1,17 +1,17 @@
 DESCRIPTION = "The Glorious Glasgow Haskell Compilation System"
-LICENSE = "GHC"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=7cb08deb79c4385547f57d6bb2864e0f"
+LICENSE = "CLOSED"
+#LIC_FILES_CHKSUM = "file://LICENSE;md5=7cb08deb79c4385547f57d6bb2864e0f"
 
-SRC_URI = "https://downloads.haskell.org/~${BPN}/${PV}/${BPN}-${PV}-x86_64-deb9-linux.tar.xz"
-SRC_URI[md5sum] = "3d886e9b304d36efb8a71f706dbd8ffa"
-SRC_URI[sha256sum] = "d1cf7886f27af070f3b7dbe1975a78b43ef2d32b86362cbe953e79464fe70761"
+SRC_URI = "https://downloads.haskell.org/~${BPN}/${PV}/${BPN}-${PV}-x86_64-deb11-linux.tar.xz"
+SRC_URI[md5sum] = "00da709ea19253e926c648580a30638e"
+SRC_URI[sha256sum] = "6c600173f11c1895469b5028a564ba6ee3a98464742ff054939a015545849145"
 
 DEPENDS = "\
     gmp-native \
     ncurses-native \
 "
 
-S = "${WORKDIR}/${BPN}-${PV}"
+S = "${WORKDIR}/${BPN}-${PV}-x86_64-unknown-linux"
 
 inherit native autotools-brokensep haskell
 
@@ -21,10 +21,10 @@ CLEANBROKEN = "1"
 do_configure() {
 
     cd ${S}
-    echo "HADDOCK_DOCS=NO" > ${S}/mk/build.mk
-    echo "WITH_TERMINFO=NO" >> ${S}/mk/build.mk
+    echo "HADDOCK_DOCS = NO" > ${S}/mk/build.mk
+    #echo "WITH_TERMINFO = NO" >> ${S}/mk/build.mk
 
-    ${S}/configure CC=`which gcc` --prefix=${prefix}
+    ${S}/configure CC=`which gcc` CXX=`which g++` --prefix=${prefix}
 }
 
 do_compile() {
@@ -35,15 +35,15 @@ do_install() {
     export LD_LIBRARY_PATH="${S}/libraries/terminfo/dist-install/build"
     export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${STAGING_DIR_NATIVE}${libdir}"
 
-    bbnote "${STAGING_DIR_NATIVE}${libdir}"
-
     cd ${S}
     make DESTDIR=${D} install
     
     # Workaround needed cause ghc searches for ghcversion.h and other files in ${WORKDIR}/recipe-sysroot-native/usr/
     # cp -rv ${WORKDIR}/image/home/michael/yocto/poky-warrior/build/tmp/work/x86_64-linux/ghc-native/8.8.2-r0/recipe-sysroot-native/usr/* ${WORKDIR}/recipe-sysroot-native/usr/
-    cp -rv ${D}${prefix}/* ${WORKDIR}/recipe-sysroot-native/usr/
+    cp -rv ${D}${prefix}/* ${STAGING_DIR_NATIVE}/usr/
 
     # init haskell database at ${TMPDIR}/haskell
     [ -d ${HASKELL_PACKAGES} ] || ghc-pkg init ${HASKELL_PACKAGES}
 }
+
+INSANE_SKIP:${PN} += "already-stripped"
